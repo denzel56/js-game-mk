@@ -64,23 +64,27 @@ function createPlayer(playerObj) {
 
 function changeHP(player) {
     const $playerLife = document.querySelector('.player' + player.player + ' .life');
+    // Получаем силу удара от 1 до 20
     const punchHits = Math.ceil(Math.random() * 20);
 
+    // Отнимаем здоровье
     player.hp -= punchHits;
 
+    // Если здоровье 0 или меньше устанавливаем style.width = 0
     if (player.hp <= 0 ) { 
         $playerLife.style.width = 0;
 
+        // Отлючаем кнопку
         $randButton.disabled = true;
         return true;
 
     } else {
+        // Иначе устанавливаем новое значение здоровья
         $playerLife.style.width = player.hp + '%';
     };
-    
-    console.log(player.name + '-' + player.hp);
 };
 
+// Функция получает имя победителя и создает блок с именем победителя 
 function playerWin(name) {
     const $winTitle = createElement('div', 'loseTitle');
     $winTitle.innerText = name + ' WINS!';
@@ -89,10 +93,12 @@ function playerWin(name) {
 };
 
 $randButton.addEventListener('click', function() {
+    // Если игрок 1 проиграл выводим имя 2 игрока
     if (changeHP(player1)) {
         $arenas.appendChild(playerWin(player2.name));
     };
     
+    // Если игрок 2 проиграл выводим имя 1 игрока
     if (changeHP(player2)) {
        $arenas.appendChild(playerWin(player1.name));
     };

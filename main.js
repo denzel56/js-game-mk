@@ -1,6 +1,10 @@
+const $arenas = document.querySelector('.arenas');
+const $randButton = document.querySelector('.button');
+
 const player1 = {
+    player: 1,
     name: 'SUBZERO',
-    hp: 90,
+    hp: 100,
     img: 'http://reactmarathon-api.herokuapp.com/assets/subzero.gif',
     weapon: [
         'sword',
@@ -13,8 +17,9 @@ const player1 = {
 };
 
 const player2 = {
-    name: 'LIUKANG',
-    hp: 30,
+    player: 2,
+    name: 'LIU KANG',
+    hp: 100,
     img: 'http://reactmarathon-api.herokuapp.com/assets/liukang.gif',
     weapon: [
         'sword',
@@ -26,51 +31,72 @@ const player2 = {
     }
 };
 
-function createPlayer(player, fighter) {
-    //Создаем div и добавдяем к нему класс player1(2)
-    const $player = document.createElement('div');
-    $player.classList.add(player);
+function createElement(tag, className) {
+    const $tag = document.createElement(tag);
+    if (className) {
+        $tag.classList.add(className);
+    }
+    return $tag;
+};
 
-    //Создаем div и добавдяем к нему класс progressbar
-    const $progressbar = document.createElement('div');
-    $progressbar.classList.add('progressbar')
-
+function createPlayer(playerObj) {
+    const $player = createElement('div', 'player' + playerObj.player);
+    const $progressbar = createElement('div', 'progressbar');
+    const $life = createElement('div', 'life');
+    const $name = createElement('div', 'name');
+    const $character = createElement('div', 'character');
+    const $img = createElement('img');
     
-    //Создаем div и добавдяем к нему класс life. Добавляем css-свойство width равное hp игрока
-    const $life = document.createElement('div');
-    $life.classList.add('life');
-    $life.style.width = fighter.hp + '%';
+    $life.style.width = playerObj.hp + '%';
+    $name.innerText = playerObj.name;
+    $img.src = playerObj.img;
 
-    //Создаем div и добавдяем к нему класс name. Кладем имя игрока в блок div
-    const $name = document.createElement('div');
-    $name.classList.add('name');
-    $name.innerText = fighter.name;
-
-    //Создаем div и добавдяем к нему класс character
-    const $character = document.createElement('div');
-    $character.classList.add('character');
-
-    //Создаем div и создаем внутри него изображение
-    const $img = document.createElement('img');
-    $img.src = fighter.img;
-
-    //Помещаем блоки div.progressbar и div.character в блок div.player1(2)
     $player.appendChild($progressbar);
     $player.appendChild($character);
 
-    //Помещаем блоки div.life и div.name в блок div.progressbar
     $progressbar.appendChild($life);
     $progressbar.appendChild($name);
 
-    //Помещаем блоки изображение игрока в блок div.character
     $character.appendChild($img);
-
-    //Помещаем div.player1(2) в блок div.arenas
-    const $arenas = document.querySelector('.arenas');
-    $arenas.appendChild($player);
+    
+    return $player;
 };
 
+function changeHP(player) {
+    const $playerLife = document.querySelector('.player' + player.player + ' .life');
+    const punchHits = Math.ceil(Math.random() * 20);
 
+    player.hp -= punchHits;
+
+    if (player.hp <= 0 ) { 
+        $playerLife.style.width = 0;
+
+        $randButton.disabled = true;
+        return true;
+
+    } else {
+        $playerLife.style.width = player.hp + '%';
+    };
+    
+    console.log(player.name + '-' + player.hp);
+};
+
+function playerWin(name) {
+    const $winTitle = createElement('div', 'loseTitle');
+    $winTitle.innerText = name + ' WINS!';
+
+    return $winTitle;
+};
+
+$randButton.addEventListener('click', function() {
+    if (changeHP(player1)) {
+        $arenas.appendChild(playerWin(player2.name));
+    };
+    
+    if (changeHP(player2)) {
+       $arenas.appendChild(playerWin(player1.name));
+    };
+});
 //Вызываем функцию создания игрока
-createPlayer('player1', player1);
-createPlayer('player2', player2);
+$arenas.appendChild(createPlayer(player1));
+$arenas.appendChild(createPlayer(player2));

@@ -90,26 +90,20 @@ function changeHP(player) {
 // Функция получает имя победителя и создает блок с именем победителя 
 function playerWin(name) {
     const $winTitle = createElement('div', 'loseTitle');
-    $winTitle.innerText = name + ' WINS!';
+    if (name) {
+        $winTitle.innerText = name + ' WINS!';
+    } else {
+        $winTitle.innerText = 'DOUBLE KILL!';
+    };
 
     return $winTitle;
 };
 // Функция выводит блок с сообщением о ничьей
-function doubleKill() {
-    const $winTitle = createElement('div', 'loseTitle');
-    $winTitle.innerText = name + ' DOUBLE KILL!';
 
-    return $winTitle;
-};
-
-
-$randButton.addEventListener('click', function() {
-    const p1 = changeHP(player1);
-    const p2 = changeHP(player2);
-
+function getWinner(p1, p2) {
     if (p1 && p2) {
         // Если ничья выводим сообшение double kill
-        $arenas.appendChild(doubleKill());
+        $arenas.appendChild(playerWin());
     } else if (p1) {
         // Если игрок 1 проиграл выводим имя 2 игрока
         $arenas.appendChild(playerWin(player2.name));
@@ -117,7 +111,15 @@ $randButton.addEventListener('click', function() {
         // Если игрок 2 проиграл выводим имя 1 игрока
         $arenas.appendChild(playerWin(player1.name));
     };
+};
+
+$randButton.addEventListener('click', function() {
+    const p1 = changeHP(player1);
+    const p2 = changeHP(player2);
+
+    getWinner(p1, p2);
 });
 //Вызываем функцию создания игрока
 $arenas.appendChild(createPlayer(player1));
 $arenas.appendChild(createPlayer(player2));
+

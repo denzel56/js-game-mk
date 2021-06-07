@@ -79,8 +79,6 @@ function changeHP(player) {
         $playerLife.style.width = 0;
         player.hp = 0;
 
-        // Отлючаем кнопку
-        $randButton.disabled = true;
         return true;
     };
 
@@ -100,24 +98,29 @@ function playerWin(name) {
 };
 // Функция выводит блок с сообщением о ничьей
 
-function getWinner(p1, p2) {
-    if (p1 && p2) {
-        // Если ничья выводим сообшение double kill
-        $arenas.appendChild(playerWin());
-    } else if (p1) {
+function getWinner() {
+    if (player1.hp === 0 && player1.hp < player2.hp) {
         // Если игрок 1 проиграл выводим имя 2 игрока
         $arenas.appendChild(playerWin(player2.name));
-    } else if (p2) {
+    } else if (player2.hp === 0 && player2.hp < player1.hp) {
         // Если игрок 2 проиграл выводим имя 1 игрока
         $arenas.appendChild(playerWin(player1.name));
+    } else if (player1.hp === 0 && player2.hp === 0) {
+        // Если ничья выводим сообшение double kill
+        $arenas.appendChild(playerWin());
     };
 };
 
 $randButton.addEventListener('click', function() {
-    const p1 = changeHP(player1);
-    const p2 = changeHP(player2);
+    changeHP(player1);
+    changeHP(player2);
 
-    getWinner(p1, p2);
+    if (player1.hp === 0 || player2.hp === 0) {
+        // Отлючаем кнопку
+        $randButton.disabled = true;
+    }
+
+    getWinner();
 });
 //Вызываем функцию создания игрока
 $arenas.appendChild(createPlayer(player1));

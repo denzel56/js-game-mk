@@ -84,16 +84,16 @@ function changeHP(hit) {
     };
 };
 
-function elHP(player) {
+function elHP() {
     // Получаем блок здоровья игрока
-    const $player = document.querySelector('.player' + player + ' .life');
+    const $player = document.querySelector('.player' + this.player + ' .life');
     
     return $player;
 };
 
 function renderHP() {
     // Отображаем изменение шкалы здоровья
-    const $playerLife = this.elHP(this.player);
+    const $playerLife = this.elHP();
 
     $playerLife.style.width = this.hp + '%';
 };

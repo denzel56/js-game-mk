@@ -192,7 +192,7 @@ $fightForm.addEventListener('submit', function(event) {
 
     for (let item of $fightForm) {
         if (item.checked && item.name === 'hit') {
-            console.log(item.value);
+            // console.log(item.value);
             attack.value = getRandom(HIT[item.value]);
             attack.hit = item.value;
         }
@@ -202,12 +202,36 @@ $fightForm.addEventListener('submit', function(event) {
         }
 
         item.checked = false;
+        // console.log(item);
     };
 
-    player1.changeHP(attack.value);
-    player2.changeHP(enemy.value);
-    console.log('###: p1', player1.hp);
-    console.log('###: p2', player2.hp);
+    if (attack.hit != enemy.defence) {
+        player2.changeHP(attack.value);
+        player2.renderHP();
+    } 
+    
+    if (attack.defence != enemy.hit) {
+        player1.changeHP(enemy.value);
+        player1.renderHP();
+    }
+
+    if (player1.hp === 0 || player2.hp === 0) {
+        // Отлючаем кнопку и выбор действий
+        for (let i of $fightForm) {
+
+            if (i.type === 'submit') {
+                i.disabled = true;
+            }
+
+            if (i.type === 'radio') {
+                i.disabled = true;
+            }
+        }
+        // Выводим победителя
+        getWinner();
+        // Вызываем фунцию создания кнопки перезагрузки
+        createReloadButton();
+    }
     console.log('###: p', attack);
     console.log('###: e', enemy);
 });

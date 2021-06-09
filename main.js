@@ -129,22 +129,12 @@ function createReloadButton() {
     const $reloadWrap = createElement('div', 'reloadWrap');
     const $reloadButton = createElement('button', 'button');
 
-    // Добавляем стили и текст в кнопку
-    $reloadWrap.style.position = 'absolute';
-    $reloadWrap.style.top = '10%';
-    $reloadWrap.style.zIndex = '1000';
-    $reloadWrap.style.left = '50%';
-    $reloadWrap.style.transform = ('translate(-50%, 0%)');
-
     $reloadButton.innerText = 'Restart';
-    $reloadButton.style.marginTop = '0';
+    // $reloadButton.style.marginTop = '0';
 
     // Добавляем кнопку в DOM-дерево
     $reloadWrap.appendChild($reloadButton);
     $arenas.appendChild($reloadWrap);
-
-    // Скрываем кнопку удара
-    $randButton.style.display = 'none';
 
     // Обрабатываем клик по кнопке
     $reloadButton.addEventListener('click', function() {
@@ -165,11 +155,10 @@ $randButton.addEventListener('click', function() {
     if (player1.hp === 0 || player2.hp === 0) {
         // Отлючаем кнопку
         $randButton.disabled = true;
+        getWinner();
         // Вызываем фунцию создания кнопки перезагрузки
         createReloadButton();
     }
-
-    getWinner();
 });
 //Вызываем функцию создания игрока
 $arenas.appendChild(createPlayer(player1));

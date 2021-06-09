@@ -81,7 +81,7 @@ function createPlayer(playerObj) {
 };
 
 function getRandom(num) {
-    // Получаем силу удара от 1 до 20
+    // Получаем силу удара
     const randNum = Math.ceil(Math.random() * num);
     return randNum;
 }
@@ -142,7 +142,6 @@ function createReloadButton() {
     const $reloadButton = createElement('button', 'button');
 
     $reloadButton.innerText = 'Restart';
-    // $reloadButton.style.marginTop = '0';
 
     // Добавляем кнопку в DOM-дерево
     $reloadWrap.appendChild($reloadButton);
@@ -192,7 +191,6 @@ $fightForm.addEventListener('submit', function(event) {
 
     for (let item of $fightForm) {
         if (item.checked && item.name === 'hit') {
-            // console.log(item.value);
             attack.value = getRandom(HIT[item.value]);
             attack.hit = item.value;
         }
@@ -202,29 +200,24 @@ $fightForm.addEventListener('submit', function(event) {
         }
 
         item.checked = false;
-        // console.log(item);
     };
 
-    if (attack.hit != enemy.defence) {
+    if (attack.hit !== enemy.defence) {
         player2.changeHP(attack.value);
         player2.renderHP();
     } 
     
-    if (attack.defence != enemy.hit) {
+    if (attack.defence !== enemy.hit) {
         player1.changeHP(enemy.value);
         player1.renderHP();
     }
 
     if (player1.hp === 0 || player2.hp === 0) {
         // Отлючаем кнопку и выбор действий
-        for (let i of $fightForm) {
+        for (let item of $fightForm) {
 
-            if (i.type === 'submit') {
-                i.disabled = true;
-            }
-
-            if (i.type === 'radio') {
-                i.disabled = true;
+            if (item.type === 'submit' || item.type === 'radio') {
+                item.disabled = true;
             }
         }
         // Выводим победителя

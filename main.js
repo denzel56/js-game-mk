@@ -15,7 +15,7 @@ const player1 = {
     changeHP,
     elHP,
     renderHP,
-    attack,
+    attack
 };
 
 const player2 = {
@@ -46,7 +46,7 @@ const ATTACK = [
 ];
 
 function attack() {
-
+    return console.log('Fight...' + this.name);
 };
 
 function createElement(tag, className) {
@@ -58,14 +58,14 @@ function createElement(tag, className) {
 };
 
 function createPlayer(playerObj) {
-    const $player = createElement('div', 'player' + playerObj.player);
+    const $player = createElement('div', `player${playerObj.player}`);
     const $progressbar = createElement('div', 'progressbar');
     const $life = createElement('div', 'life');
     const $name = createElement('div', 'name');
     const $character = createElement('div', 'character');
     const $img = createElement('img');
     
-    $life.style.width = playerObj.hp + '%';
+    $life.style.width = `${playerObj.hp}%`;
     $name.innerText = playerObj.name;
     $img.src = playerObj.img;
 
@@ -98,7 +98,7 @@ function changeHP(hit) {
 
 function elHP() {
     // Получаем блок здоровья игрока
-    const $player = document.querySelector('.player' + this.player + ' .life');
+    const $player = document.querySelector(`.player${this.player} .life`);
     
     return $player;
 };
@@ -107,14 +107,14 @@ function renderHP() {
     // Отображаем изменение шкалы здоровья
     const $playerLife = this.elHP();
 
-    $playerLife.style.width = this.hp + '%';
+    $playerLife.style.width = `${this.hp}%`;
 };
 
 // Функция получает имя победителя и создает блок с именем победителя 
 function playerWin(name) {
     const $winTitle = createElement('div', 'loseTitle');
     if (name) {
-        $winTitle.innerText = name + ' WINS!';
+        $winTitle.innerText = `${name} WINS!`;
     } else {
         // Выводим блок с сообщением о ничьей
         $winTitle.innerText = 'DOUBLE KILL!';
@@ -172,6 +172,23 @@ function createReloadButton() {
 //     }
 // });
 
+function showResult() {
+    if (player1.hp === 0 || player2.hp === 0) {
+        // Отлючаем кнопку и выбор действий
+        for (let item of $fightForm) {
+
+            if (item.type === 'submit' || item.type === 'radio') {
+                item.disabled = true;
+            }
+        }
+        // Выводим победителя
+        getWinner();
+        // Вызываем фунцию создания кнопки перезагрузки
+        createReloadButton();
+    }
+};
+
+
 function enemyAttack() {
     const hit = ATTACK[getRandom(3) - 1];
     const defence = ATTACK[getRandom(3) - 1];
@@ -183,10 +200,7 @@ function enemyAttack() {
     }
 };
 
-$fightForm.addEventListener('submit', function(event) {
-    event.preventDefault();
-
-    const enemy = enemyAttack();
+function playerAttack() {
     const attack = {};
 
     for (let item of $fightForm) {
@@ -202,30 +216,29 @@ $fightForm.addEventListener('submit', function(event) {
         item.checked = false;
     };
 
-    if (attack.hit !== enemy.defence) {
-        player2.changeHP(attack.value);
+    return attack;
+
+};
+
+$fightForm.addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    const enemy = enemyAttack();
+    const player = playerAttack();
+
+    if (player.hit !== enemy.defence) {
+        player2.changeHP(player.value);
         player2.renderHP();
     } 
     
-    if (attack.defence !== enemy.hit) {
+    if (player.defence !== enemy.hit) {
         player1.changeHP(enemy.value);
         player1.renderHP();
     }
 
-    if (player1.hp === 0 || player2.hp === 0) {
-        // Отлючаем кнопку и выбор действий
-        for (let item of $fightForm) {
-
-            if (item.type === 'submit' || item.type === 'radio') {
-                item.disabled = true;
-            }
-        }
-        // Выводим победителя
-        getWinner();
-        // Вызываем фунцию создания кнопки перезагрузки
-        createReloadButton();
-    }
-    console.log('###: p', attack);
+    showResult();
+    
+    console.log('###: p', player);
     console.log('###: e', enemy);
 });
 //Вызываем функцию создания игрока

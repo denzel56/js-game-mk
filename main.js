@@ -168,12 +168,15 @@ function getWinner() {
     if (player1.hp === 0 && player1.hp < player2.hp) {
         // Если игрок 1 проиграл выводим имя 2 игрока
         $arenas.appendChild(playerWin(player2.name));
+        generateLogs('end', player2.name, player1.name);
     } else if (player2.hp === 0 && player2.hp < player1.hp) {
         // Если игрок 2 проиграл выводим имя 1 игрока
         $arenas.appendChild(playerWin(player1.name));
+        generateLogs('end', player1.name, player2.name);
     } else if (player1.hp === 0 && player2.hp === 0) {
         // Если ничья выводим сообшение double kill
         $arenas.appendChild(playerWin());
+        generateLogs('draw');
     };
 };
 
@@ -263,8 +266,30 @@ function playerAttack() {
 
 function generateLogs(type, player1, player2) {
     const time = new Date();
-    const text = logs[type][getRandom(logs[type].length)].replace('[playerKick]', player1).replace('[playerDefence]', player2);
-    const el = `<p>${text}</p>`;
+    const fightTime = `${time.getHours()}:${time.getMinutes()}:${time.getSeconds()}`;
+    let text;
+    switch(type) {
+        case 'start' :
+            // console.log(fightTime);
+            text = logs[type].replace('[time]', fightTime).replace('[player1]', player1).replace('[player2]', player2);
+            break;
+        case 'hit' :
+            text = logs[type][getRandom(logs[type].length) - 1].replace('[playerKick]', player1).replace('[playerDefence]', player2);
+            break;
+        case 'defence' :
+            text = logs[type][getRandom(logs[type].length) - 1].replace('[playerKick]', player1).replace('[playerDefence]', player2);
+            break;
+        case 'end' :
+            text = logs[type][getRandom(logs[type].length) - 1].replace('[playerWins]', player1).replace('[playerLose]', player2);
+            break;
+        case 'draw' :
+            text = logs[type];
+            break;
+        default :
+            text = '... ждем ...';
+            break;
+    }
+    const el = `<p>${fightTime} ${text}</p>`;
     $chat.insertAdjacentHTML('afterbegin', el);
 }
 
@@ -287,11 +312,14 @@ $fightForm.addEventListener('submit', function(event) {
     }
 
     showResult();
-    
+
     console.log('###: p', player);
     console.log('###: e', enemy);
 });
 //Вызываем функцию создания игрока
 $arenas.appendChild(createPlayer(player1));
 $arenas.appendChild(createPlayer(player2));
+
+// generateLogs('start', player1.name, player2.name);
+generateLogs();
 

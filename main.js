@@ -1,5 +1,6 @@
 const $arenas = document.querySelector('.arenas');
-const $randButton = document.querySelector('.button');
+// const $randButton = document.querySelector('.button');
+const $fightForm = document.querySelector('.control')
 
 const player1 = {
     player: 1,
@@ -11,12 +12,10 @@ const player1 = {
         'shuriken',
         'kunai'
     ],
-    attack: function() {
-        return console.log('Fight...' + this.name);
-    },
-    changeHP: changeHP,
-    elHP: elHP,
-    renderHP: renderHP
+    changeHP,
+    elHP,
+    renderHP,
+    attack,
 };
 
 const player2 = {
@@ -29,12 +28,25 @@ const player2 = {
         'shuriken',
         'kunai'
     ],
-    attack: function() {
-        return console.log('Fight...' + this.name);
-    },
-    changeHP: changeHP,
-    elHP: elHP,
-    renderHP: renderHP
+    changeHP,
+    elHP,
+    renderHP,
+    attack
+};
+
+const HIT = {
+    head: 30,
+    body: 25,
+    foot: 20,
+}
+const ATTACK = [
+    'head',
+    'body',
+    'foot'
+];
+
+function attack() {
+
 };
 
 function createElement(tag, className) {
@@ -68,10 +80,10 @@ function createPlayer(playerObj) {
     return $player;
 };
 
-function punchHits(hit) {
-    // Получаем силу удара от 1 до 20
-    const punch = Math.ceil(Math.random() * hit);
-    return punch;
+function getRandom(num) {
+    // Получаем силу удара
+    const randNum = Math.ceil(Math.random() * num);
+    return randNum;
 }
 
 function changeHP(hit) {
@@ -130,7 +142,6 @@ function createReloadButton() {
     const $reloadButton = createElement('button', 'button');
 
     $reloadButton.innerText = 'Restart';
-    // $reloadButton.style.marginTop = '0';
 
     // Добавляем кнопку в DOM-дерево
     $reloadWrap.appendChild($reloadButton);
@@ -143,22 +154,79 @@ function createReloadButton() {
     });
 };
 
-$randButton.addEventListener('click', function() {
-    // Вызываем метод изменения здоровья
-    player1.changeHP(punchHits(20));
-    // Вызываем метод отображения здоровья
-    player1.renderHP();
+// $randButton.addEventListener('click', function() {
+//     // Вызываем метод изменения здоровья
+//     player1.changeHP(getRandom(20));
+//     // Вызываем метод отображения здоровья
+//     player1.renderHP();
 
-    player2.changeHP(punchHits(20))
-    player2.renderHP();
+//     player2.changeHP(getRandom(20))
+//     player2.renderHP();
     
+//     if (player1.hp === 0 || player2.hp === 0) {
+//         // Отлючаем кнопку
+//         $randButton.disabled = true;
+//         getWinner();
+//         // Вызываем фунцию создания кнопки перезагрузки
+//         createReloadButton();
+//     }
+// });
+
+function enemyAttack() {
+    const hit = ATTACK[getRandom(3) - 1];
+    const defence = ATTACK[getRandom(3) - 1];
+
+    return {
+        value: getRandom(HIT[hit]),
+        hit,
+        defence,
+    }
+};
+
+$fightForm.addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    const enemy = enemyAttack();
+    const attack = {};
+
+    for (let item of $fightForm) {
+        if (item.checked && item.name === 'hit') {
+            attack.value = getRandom(HIT[item.value]);
+            attack.hit = item.value;
+        }
+
+        if (item.checked && item.name === 'defence') {
+            attack.defence = item.value;
+        }
+
+        item.checked = false;
+    };
+
+    if (attack.hit !== enemy.defence) {
+        player2.changeHP(attack.value);
+        player2.renderHP();
+    } 
+    
+    if (attack.defence !== enemy.hit) {
+        player1.changeHP(enemy.value);
+        player1.renderHP();
+    }
+
     if (player1.hp === 0 || player2.hp === 0) {
-        // Отлючаем кнопку
-        $randButton.disabled = true;
+        // Отлючаем кнопку и выбор действий
+        for (let item of $fightForm) {
+
+            if (item.type === 'submit' || item.type === 'radio') {
+                item.disabled = true;
+            }
+        }
+        // Выводим победителя
         getWinner();
         // Вызываем фунцию создания кнопки перезагрузки
         createReloadButton();
     }
+    console.log('###: p', attack);
+    console.log('###: e', enemy);
 });
 //Вызываем функцию создания игрока
 $arenas.appendChild(createPlayer(player1));

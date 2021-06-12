@@ -168,15 +168,17 @@ function getWinner() {
     if (player1.hp === 0 && player1.hp < player2.hp) {
         // Если игрок 1 проиграл выводим имя 2 игрока
         $arenas.appendChild(playerWin(player2.name));
-        generateLogs('end', player2.name, player1.name);
+        // generateLogs('end', player2.name, player1.name);
+        generateLogs(getLogMessage('end', player2.name, player1.name));
     } else if (player2.hp === 0 && player2.hp < player1.hp) {
         // Если игрок 2 проиграл выводим имя 1 игрока
         $arenas.appendChild(playerWin(player1.name));
-        generateLogs('end', player1.name, player2.name);
+        // generateLogs('end', player1.name, player2.name);
+        generateLogs(getLogMessage('end', player1.name, player2.name));
     } else if (player1.hp === 0 && player2.hp === 0) {
         // Если ничья выводим сообшение double kill
         $arenas.appendChild(playerWin());
-        generateLogs('draw');
+        generateLogs(getLogMessage('draw'));
     };
 };
 
@@ -264,32 +266,48 @@ function playerAttack() {
 
 };
 
-function generateLogs(type, player1, player2) {
+function getTime() {
     const time = new Date();
     const fightTime = `${time.getHours()}:${time.getMinutes()}:${time.getSeconds()}`;
+
+    return fightTime;
+};
+
+function getLogMessage(type, player1, player2) {
+    
     let text;
     switch(type) {
         case 'start' :
-            // console.log(fightTime);
-            text = logs[type].replace('[time]', fightTime).replace('[player1]', player1).replace('[player2]', player2);
-            break;
+            text = logs[type].replace('[player1]', player1).replace('[player2]', player2);
+            return text;
         case 'hit' :
             text = logs[type][getRandom(logs[type].length) - 1].replace('[playerKick]', player1).replace('[playerDefence]', player2);
-            break;
+            return text;
         case 'defence' :
             text = logs[type][getRandom(logs[type].length) - 1].replace('[playerKick]', player1).replace('[playerDefence]', player2);
-            break;
+            return text;
         case 'end' :
             text = logs[type][getRandom(logs[type].length) - 1].replace('[playerWins]', player1).replace('[playerLose]', player2);
-            break;
+            return text;
         case 'draw' :
             text = logs[type];
-            break;
+            return text;
         default :
             text = '... ждем ...';
-            break;
+            return text;
     }
-    const el = `<p>${fightTime} ${text}</p>`;
+};
+
+function generateLogs(text, damage, playerHP) {
+    const fightTime = getTime();
+    const message = text.replace('[time]', fightTime);
+    let el;
+    if (damage) {
+        el = `<p>${fightTime} ${message} -${damage} ${playerHP}/100</p>`;
+    } else {
+        el = `<p>${fightTime} ${message}</p>`;
+    }
+
     $chat.insertAdjacentHTML('afterbegin', el);
 }
 
@@ -302,13 +320,22 @@ $fightForm.addEventListener('submit', function(event) {
     if (player.hit !== enemy.defence) {
         player2.changeHP(player.value);
         player2.renderHP();
-        generateLogs('hit', player1.name, player2.name);
-    } 
+        
+        // const message = getLogMessage('hit', player1.name, player2.name);
+        generateLogs(getLogMessage('hit', player1.name, player2.name), player.value, player2.hp);
+
+    } else {
+        generateLogs(getLogMessage('defence', player1.name, player2.name), 0, player2.hp);
+    }
     
-    if (enemy.hit !== player.defence) {
+    if (player.defence !== enemy.hit) {
         player1.changeHP(enemy.value);
         player1.renderHP();
-        generateLogs('defence', player2.name, player1.name);
+        // generateLogs('hit', player2.name, player1.name);
+        generateLogs(getLogMessage('hit', player2.name, player1.name), enemy.value, player1.hp);
+    } else {
+        // generateLogs('defence', player2.name, player1.name);
+        generateLogs(getLogMessage('defence', player2.name, player1.name), 0, player1.hp);
     }
 
     showResult();
@@ -319,7 +346,5 @@ $fightForm.addEventListener('submit', function(event) {
 //Вызываем функцию создания игрока
 $arenas.appendChild(createPlayer(player1));
 $arenas.appendChild(createPlayer(player2));
-
-// generateLogs('start', player1.name, player2.name);
-generateLogs();
+generateLogs(getLogMessage('start', player1.name, player2.name));
 

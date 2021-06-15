@@ -13,9 +13,6 @@ const player1 = {
         'shuriken',
         'kunai'
     ],
-    changeHP,
-    elHP,
-    renderHP,
     attack
 };
 
@@ -29,9 +26,6 @@ const player2 = {
         'shuriken',
         'kunai'
     ],
-    changeHP,
-    elHP,
-    renderHP,
     attack
 };
 
@@ -121,13 +115,15 @@ function createPlayer(playerObj) {
     return $player;
 };
 
-function getRandom(num) {
-    // Получаем силу удара
-    const randNum = Math.ceil(Math.random() * num);
-    return randNum;
-}
+// function getRandom(num) {
+//     // Получаем силу удара
+//     const randNum = Math.ceil(Math.random() * num);
+//     return randNum;
+// }
 
-function changeHP(hit) {
+const getRandom = (num) => Math.ceil(Math.random() * num);
+
+Object.prototype.changeHP = function(hit) {
     // Отнимаем здоровье
     this.hp -= hit;
 
@@ -137,14 +133,16 @@ function changeHP(hit) {
     };
 };
 
-function elHP() {
+Object.prototype.elHP = function() {
     // Получаем блок здоровья игрока
     const $player = document.querySelector(`.player${this.player} .life`);
     
     return $player;
 };
 
-function renderHP() {
+// const elHP = () => document.querySelector(`.player${this.player} .life`);
+
+Object.prototype.renderHP = function() {
     // Отображаем изменение шкалы здоровья
     const $playerLife = this.elHP();
 
@@ -236,13 +234,13 @@ function showResult() {
 
 
 function enemyAttack() {
-    const hit = ATTACK[getRandom(3) - 1];
-    const defence = ATTACK[getRandom(3) - 1];
+    const enemyHit = ATTACK[getRandom(3) - 1];
+    const enemyDefence = ATTACK[getRandom(3) - 1];
 
     return {
-        value: getRandom(HIT[hit]),
-        hit,
-        defence,
+        enemyHitValue: getRandom(HIT[enemyHit]),
+        enemyHit,
+        enemyDefence,
     }
 };
 
@@ -251,12 +249,12 @@ function playerAttack() {
 
     for (let item of $fightForm) {
         if (item.checked && item.name === 'hit') {
-            attack.value = getRandom(HIT[item.value]);
-            attack.hit = item.value;
+            attack.playerHitValue = getRandom(HIT[item.value]);
+            attack.playerHit = item.value;
         }
 
         if (item.checked && item.name === 'defence') {
-            attack.defence = item.value;
+            attack.playerDefence = item.value;
         }
 
         item.checked = false;
@@ -266,7 +264,15 @@ function playerAttack() {
 
 };
 
-function getTime() {
+// function getTime() {
+//     const time = new Date();
+//     const normalize = (num) => (num.toString().length > 1 ? num : `0${num}`);
+//     const fightTime = `${normalize(time.getHours())}:${normalize(time.getMinutes())}:${normalize(time.getSeconds())}`;
+
+//     return fightTime;
+// };
+
+const getTime = () => {
     const time = new Date();
     const normalize = (num) => (num.toString().length > 1 ? num : `0${num}`);
     const fightTime = `${normalize(time.getHours())}:${normalize(time.getMinutes())}:${normalize(time.getSeconds())}`;
@@ -326,22 +332,25 @@ $fightForm.addEventListener('submit', function(event) {
     const enemy = enemyAttack();
     const player = playerAttack();
 
-    if (player.hit !== enemy.defence) {
-        player2.changeHP(player.value);
+    const {enemyHitValue, enemyHit, enemyDefence} = enemy;
+    const {playerHitValue, playerHit, playerDefence} = player;
+
+    if (playerHit !== enemyDefence) {
+        player2.changeHP(playerHitValue);
         player2.renderHP();
         
         // const message = getLogMessage('hit', player1.name, player2.name);
-        generateLogs(getLogMessage('hit', player1.name, player2.name), player.value, player2.hp);
+        generateLogs(getLogMessage('hit', player1.name, player2.name), playerHitValue, player2.hp);
 
     } else {
         generateLogs(getLogMessage('defence', player1.name, player2.name), 0, player2.hp);
     }
     
-    if (player.defence !== enemy.hit) {
-        player1.changeHP(enemy.value);
+    if (playerDefence !== enemyHit) {
+        player1.changeHP(enemyHitValue);
         player1.renderHP();
         // generateLogs('hit', player2.name, player1.name);
-        generateLogs(getLogMessage('hit', player2.name, player1.name), enemy.value, player1.hp);
+        generateLogs(getLogMessage('hit', player2.name, player1.name), enemyHitValue, player1.hp);
     } else {
         // generateLogs('defence', player2.name, player1.name);
         generateLogs(getLogMessage('defence', player2.name, player1.name), 0, player1.hp);

@@ -268,7 +268,8 @@ function playerAttack() {
 
 function getTime() {
     const time = new Date();
-    const fightTime = `${time.getHours()}:${time.getMinutes()}:${time.getSeconds()}`;
+    const normalize = (num) => (num.toString().length > 1 ? num : `0${num}`);
+    const fightTime = `${normalize(time.getHours())}:${normalize(time.getMinutes())}:${normalize(time.getSeconds())}`;
 
     return fightTime;
 };
@@ -278,16 +279,24 @@ function getLogMessage(type, player1, player2) {
     let text;
     switch(type) {
         case 'start' :
-            text = logs[type].replace('[player1]', player1).replace('[player2]', player2);
+            text = logs[type]
+                .replace('[player1]', player1)
+                .replace('[player2]', player2);
             return text;
         case 'hit' :
-            text = logs[type][getRandom(logs[type].length) - 1].replace('[playerKick]', player1).replace('[playerDefence]', player2);
+            text = logs[type][getRandom(logs[type].length) - 1]
+                .replace('[playerKick]', player1)
+                .replace('[playerDefence]', player2);
             return text;
         case 'defence' :
-            text = logs[type][getRandom(logs[type].length) - 1].replace('[playerKick]', player1).replace('[playerDefence]', player2);
+            text = logs[type][getRandom(logs[type].length) - 1]
+                .replace('[playerKick]', player1)
+                .replace('[playerDefence]', player2);
             return text;
         case 'end' :
-            text = logs[type][getRandom(logs[type].length) - 1].replace('[playerWins]', player1).replace('[playerLose]', player2);
+            text = logs[type][getRandom(logs[type].length) - 1]
+                .replace('[playerWins]', player1)
+                .replace('[playerLose]', player2);
             return text;
         case 'draw' :
             text = logs[type];

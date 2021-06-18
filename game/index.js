@@ -172,10 +172,7 @@ class Game {
         
             const {enemyHitValue, enemyHit, enemyDefence} = this.enemyAttack();
             const {playerHitValue, playerHit, playerDefence} = this.playerAttack();
-            
-            // Деструтурируем объекты
-            // const  = enemy;
-            // const  = player;
+        
     
             if (playerHit !== enemyDefence) {
                 player2.changeHP(playerHitValue);

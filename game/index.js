@@ -7,23 +7,26 @@ const $arenas = document.querySelector('.arenas');
 const $chat = document.querySelector('.chat');
 const $fightForm = document.querySelector('.control');
 
-const player1 = new Player({
-    player: 1,
-    name: 'SUBZERO',
-    hp: 100,
-    img: 'http://reactmarathon-api.herokuapp.com/assets/subzero.gif',
-    rootSelector: 'arenas'
-});
-
-const player2 = new Player({
-    player: 2,
-    name: 'LIU KANG',
-    hp: 100,
-    img: 'http://reactmarathon-api.herokuapp.com/assets/liukang.gif',
-    rootSelector: 'arenas'
-});
-
 class Game {
+
+    constructor() {
+        this.player1 = new Player({
+            player: 1,
+            name: 'SUBZERO',
+            hp: 100,
+            img: 'http://reactmarathon-api.herokuapp.com/assets/subzero.gif',
+            rootSelector: 'arenas'
+        });
+
+        this.player2 = new Player({
+            player: 2,
+            name: 'LIU KANG',
+            hp: 100,
+            img: 'http://reactmarathon-api.herokuapp.com/assets/liukang.gif',
+            rootSelector: 'arenas'
+        });
+        
+    }
 
     playerWin = (name) => {
         const $winTitle = createElement('div', 'loseTitle');
@@ -38,17 +41,17 @@ class Game {
     };
 
     getWinner = () => {
-        if (player1.hp === 0 && player1.hp < player2.hp) {
+        if (this.player1.hp === 0 && this.player1.hp < this.player2.hp) {
             // Если игрок 1 проиграл выводим имя 2 игрока и генерируем сообщение в лог
-            $arenas.appendChild(this.playerWin(player2.name));
-            this.generateLogs(this.getLogMessage('end', player2.name, player1.name));
+            $arenas.appendChild(this.playerWin(this.player2.name));
+            this.generateLogs(this.getLogMessage('end', this.player2.name, this.player1.name));
     
-        } else if (player2.hp === 0 && player2.hp < player1.hp) {
+        } else if (this.player2.hp === 0 && this.player2.hp < this.player1.hp) {
             // Если игрок 2 проиграл выводим имя 1 игрока и генерируем сообщение в лог
-            $arenas.appendChild(this.playerWin(player1.name));
-            this.generateLogs(this.getLogMessage('end', player1.name, player2.name));
+            $arenas.appendChild(this.playerWin(this.player1.name));
+            this.generateLogs(this.getLogMessage('end', this.player1.name, this.player2.name));
     
-        } else if (player1.hp === 0 && player2.hp === 0) {
+        } else if (this.player1.hp === 0 && this.player2.hp === 0) {
             // Если ничья выводим сообшение double kill и генерируем сообщение в лог
             $arenas.appendChild(this.playerWin());
             this.generateLogs(this.getLogMessage('draw'));
@@ -74,7 +77,7 @@ class Game {
     };
 
     showResult = () => {
-        if (player1.hp === 0 || player2.hp === 0) {
+        if (this.player1.hp === 0 || this.player2.hp === 0) {
             // Отлючаем кнопку и выбор действий
             for (let item of $fightForm) {
     
@@ -175,23 +178,23 @@ class Game {
         
     
             if (playerHit !== enemyDefence) {
-                player2.changeHP(playerHitValue);
-                player2.renderHP();
+                this.player2.changeHP(playerHitValue);
+                this.player2.renderHP();
                 // Получаем сообщение лога и передаем его для вывода
-                this.generateLogs(this.getLogMessage('hit', player1.name, player2.name), playerHitValue, player2.hp);
+                this.generateLogs(this.getLogMessage('hit', this.player1.name, this.player2.name), playerHitValue, this.player2.hp);
     
             } else {
-                this.generateLogs(this.getLogMessage('defence', player1.name, player2.name), 0, player2.hp);
+                this.generateLogs(this.getLogMessage('defence', this.player1.name, this.player2.name), 0, this.player2.hp);
             }
             
             if (playerDefence !== enemyHit) {
-                player1.changeHP(enemyHitValue);
-                player1.renderHP();
+                this.player1.changeHP(enemyHitValue);
+                this.player1.renderHP();
                 // Получаем сообщение лога и передаем его для вывода
-                this.generateLogs(this.getLogMessage('hit', player2.name, player1.name), enemyHitValue, player1.hp);
+                this.generateLogs(this.getLogMessage('hit', this.player2.name, this.player1.name), enemyHitValue, this.player1.hp);
     
             } else {
-                this.generateLogs(this.getLogMessage('defence', player2.name, player1.name), 0, player1.hp);
+                this.generateLogs(this.getLogMessage('defence', this.player2.name, this.player1.name), 0, this.player1.hp);
             }
             // Показываем результат
             this.showResult();
@@ -204,11 +207,12 @@ class Game {
         
 
     start = () => {
-        player1.createPlayer();
-        player2.createPlayer();
+        // console.log(this.player1);
+        this.player1.createPlayer();
+        this.player2.createPlayer();
 
         this.fightFomListenner();
-        this.generateLogs(this.getLogMessage('start', player1.name, player2.name));    
+        this.generateLogs(this.getLogMessage('start', this.player1.name, this.player2.name));    
     }
 };
 

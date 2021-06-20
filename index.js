@@ -32,8 +32,6 @@ async function init() {
 
     let imgSrc = null;
     createEmptyPlayerBlock();
-    
-    console.log(players);
 
     players.forEach(item => {
         const el = createElement('div', ['character', `div${item.id}`]);

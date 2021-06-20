@@ -62,7 +62,7 @@ class Game {
         // Обрабатываем клик по кнопке
         $reloadButton.addEventListener('click', function() {
             // Обновляем страницу
-            window.location.reload();
+            window.location.pathname = 'index.html';
         });
     };
 
@@ -178,32 +178,32 @@ class Game {
             const {hit, defence} = this.playerAttack();
             const playersTactic = await this.attack(hit, defence);
             
-            const {playerHitValue ,playerHit, playerDefence} = playersTactic.player1;
-            const {enemyHitValue, enemyHit, enemyDefence} = playersTactic.player2
+            const {value: playerHitValue, hit: playerHit, defence: playerDefence} = playersTactic.player1;
+            const {value: enemyHitValue, hit: enemyHit, defence: enemyDefence} = playersTactic.player2
             
-            console.log(playersTactic.player1, playersTactic.player2);
+            console.log(this.playerAttack());
     
-            // if (playerHit !== enemyDefence) {
-            //     player2.changeHP(playerHitValue);
-            //     player2.renderHP();
-            //     // Получаем сообщение лога и передаем его для вывода
-            //     this.generateLogs(this.getLogMessage('hit', player1.name, player2.name), playerHitValue, player2.hp);
+            if (playerHit !== enemyDefence) {
+                player2.changeHP(playerHitValue);
+                player2.renderHP();
+                // Получаем сообщение лога и передаем его для вывода
+                this.generateLogs(this.getLogMessage('hit', player1.name, player2.name), playerHitValue, player2.hp);
     
-            // } else {
-            //     this.generateLogs(this.getLogMessage('defence', player1.name, player2.name), 0, player2.hp);
-            // }
+            } else {
+                this.generateLogs(this.getLogMessage('defence', player1.name, player2.name), 0, player2.hp);
+            }
             
-            // if (playerDefence !== enemyHit) {
-            //     player1.changeHP(enemyHitValue);
-            //     player1.renderHP();
-            //     // Получаем сообщение лога и передаем его для вывода
-            //     this.generateLogs(this.getLogMessage('hit', player2.name, player1.name), enemyHitValue, player1.hp);
+            if (playerDefence !== enemyHit) {
+                player1.changeHP(enemyHitValue);
+                player1.renderHP();
+                // Получаем сообщение лога и передаем его для вывода
+                this.generateLogs(this.getLogMessage('hit', player2.name, player1.name), enemyHitValue, player1.hp);
     
-            // } else {
-            //     this.generateLogs(this.getLogMessage('defence', player2.name, player1.name), 0, player1.hp);
-            // }
-            // // Показываем результат
-            // this.showResult();
+            } else {
+                this.generateLogs(this.getLogMessage('defence', player2.name, player1.name), 0, player1.hp);
+            }
+            // Показываем результат
+            this.showResult();
     
             console.log('###: p', playerHitValue, playerHit, playerDefence);
             console.log('###: e', enemyHitValue, enemyHit, enemyDefence);

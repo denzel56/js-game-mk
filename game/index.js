@@ -82,16 +82,6 @@ class Game {
         }
     };
 
-    // enemyAttack = () => {
-    //     const enemyHit = ATTACK[getRandom(3) - 1];
-    //     const enemyDefence = ATTACK[getRandom(3) - 1];
-    
-    //     return {
-    //         enemyHitValue: getRandom(HIT[enemyHit]),
-    //         enemyHit,
-    //         enemyDefence,
-    //     }
-    // };
 
     playerAttack = () => {
         const attack = {};

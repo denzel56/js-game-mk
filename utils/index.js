@@ -10,6 +10,7 @@ export const createElement = (tag, className) => {
     return $tag;
 };
 
+
 export const getTime = () => {
     const time = new Date();
     const normalize = (num) => (num.toString().length > 1 ? num : `0${num}`);
